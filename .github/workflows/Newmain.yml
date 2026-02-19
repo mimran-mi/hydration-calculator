@@ -1,0 +1,76 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Build
+        run: npm run build
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+5. Click **"Commit changes..."** (green button top-right)
+6. Add commit message: `Add deployment workflow`
+7. Click **"Commit changes"**
+
+---
+
+### **Step 2: Enable GitHub Pages**
+
+1. Click **"Settings"** tab (top menu)
+2. Scroll down left sidebar and click **"Pages"**
+3. Under **"Source"**, select: **GitHub Actions**
+4. (No need to click Save - it auto-saves)
+
+---
+
+### **Step 3: Watch It Deploy**
+
+1. Go back to **"Actions"** tab
+2. You should see a workflow running with a yellow dot 🟡
+3. Click on it to watch progress
+4. Wait 2-3 minutes for it to complete
+5. When it turns green ✅, it's deployed!
+
+---
+
+### **Step 4: Visit Your Live Site**
+
+Your calculator will be live at:
+```
+https://YOUR_USERNAME.github.io/hydration-calculator/
